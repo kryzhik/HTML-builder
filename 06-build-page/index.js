@@ -46,20 +46,17 @@ fs.mkdir(path.join(__dirname, 'project-dist'),{recursive:true}, err=> {
   });
   fs.readdir(path.join(__dirname, 'assets'), { withFileTypes: true },(err, files)=> {
     if (err) console.log(err);
-    fs.mkdir(path.join(__dirname, 'project-dist', 'assets'), {recursive:true}, err=> {
+    fs.mkdir(path.join(__dirname, 'project-dist', 'assets'),{recursive:true}, err=> {
       if (err) console.log(err);
       files.forEach((file)=> {
-        console.log(file);
-        fs.mkdir(path.join(__dirname, 'project-dist', 'assets', file.name), err=> {
+        fs.mkdir(path.join(__dirname, 'project-dist', 'assets', file.name),{recursive:true}, err=> {
           if (err) console.log(err);
           fs.readdir(path.join(__dirname, 'assets', file.name), { withFileTypes: true }, (err, subFiles)=> {
             if (err) console.log(err);
             subFiles.forEach(subfile=> {
-              fs.copyFile(path.resolve(__dirname, 'assets', file.name, subfile), path.resolve(__dirname, 'project-dist', 'assets', file.name, subfile), err=> {
+              fs.copyFile(path.resolve(__dirname, 'assets', file.name + '/' + subfile.name), path.resolve(__dirname, 'project-dist', 'assets', file.name + '/' + subfile.name), err=> {
                 if (err) console.log(err);
-                console.log(file.name);
               });
-              console.log(path.resolve(__dirname, 'assets', file.name));
             });
           });
         }); 
