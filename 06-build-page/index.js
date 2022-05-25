@@ -6,21 +6,24 @@ fs.mkdir(path.join(__dirname, 'project-dist'),{recursive:true}, err=> {
   fs.readFile(path.join(__dirname, 'template.html'), 'utf-8', (err, filecontent)=> {
     if (err) console.log(err);
     let templateContent = filecontent;
-    fs.readFile(path.join(__dirname, 'components', 'header.html'), 'utf-8', (err, headerFileContent)=> {
+    fs.readdir(path.join(__dirname, 'components'), { withFileTypes: true }, (err, files)=> {
       if (err) console.log(err);
-      templateContent = templateContent.replace(/\{\{header\}\}/, headerFileContent);
-      fs.readFile(path.join(__dirname, 'components', 'articles.html'), 'utf-8', (err, articlesFileContent)=> {
-        if (err) console.log(err);
-        templateContent = templateContent.replace(/\{\{articles\}\}/, articlesFileContent);
-        fs.readFile(path.join(__dirname, 'components', 'footer.html'), 'utf-8', (err, footerFileContent)=> {
-          if (err) console.log(err);
-          templateContent = templateContent.replace(/\{\{footer\}\}/, footerFileContent);
-          fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), templateContent, (err)=> {
+      files.forEach((file) => {
+        if (file.isFile() && path.extname(file.name) === '.html') {
+          let fileName = file.name.split('.')[0];
+          fs.readFile(path.join(__dirname, 'components', file.name),  'utf-8', (err, filecontent)=> {
             if (err) console.log(err);
+            templateContent = templateContent.replace(`{{${fileName}}}`, filecontent);
+            fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), templateContent, (err)=> {
+              if (err) console.log(err);
+                 
+            });
+             
           });
-        });  
-      });    
-    });     
+          
+        }
+      });
+    });  
   });
   fs.writeFile(path.join(__dirname, 'project-dist', 'style.css'), '', (err)=> {
     if (err) console.log(err);
